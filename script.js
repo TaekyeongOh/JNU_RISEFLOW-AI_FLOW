@@ -13,15 +13,16 @@ const wastePredictions = {
   };
   
   const products = [
-    { id: "pouch_01", name: "조각보 파우치", emoji: "👝", qrKey: "story_pouch_01" },
-    { id: "bag_01", name: "에코백", emoji: "🛍️", qrKey: "story_bag_01" },
-    { id: "coaster_01", name: "컵받침 세트", emoji: "☕", qrKey: "story_coaster_01" },
-    { id: "keyring_01", name: "앞치마", emoji: "👗", qrKey: "story_keyring_01" },
+    { id: "pouch_01", name: "조각보 파우치", img: "./images/image1.jpg", emoji: "👝", qrKey: "story_pouch_01" },
+    { id: "bag_01", name: "에코백", img: "./images/image2.jpg", emoji: "🛍️", qrKey: "story_bag_01" },
+    { id: "coaster_01", name: "컵받침 세트",  img: "./images/image3.jpg", emoji: "☕", qrKey: "story_coaster_01" },
+    { id: "keyring_01", name: "앞치마",  img: "./images/image4.jpg", emoji: "👗", qrKey: "story_keyring_01" },
   ];
   
   const stories = {
     story_pouch_01: {
       title: "복을 담은 조각보 파우치",
+      img: "./images/image1.jpg",
       emoji: "👝",
       pickup: { place: "제주시 구좌읍 세화해변", date: "2025년 12월 10일" },
       makerStory:
@@ -30,6 +31,7 @@ const wastePredictions = {
     },
     story_bag_01: {
       title: "바다를 담은 에코백",
+      img: "./images/image2.jpg",
       emoji: "🛍️",
       pickup: { place: "제주시 함덕해수욕장", date: "2025년 12월 5일" },
       makerStory:
@@ -38,6 +40,7 @@ const wastePredictions = {
     },
     story_coaster_01: {
       title: "해양 조각보 컵받침",
+      img: "./images/image3.jpg",
       emoji: "☕",
       pickup: { place: "서귀포시 표선해변", date: "2025년 12월 8일" },
       makerStory: "표선 지역 어머니회에서 작은 플라스틱 조각들을 모아 아름다운 컵받침으로 재탄생시켰습니다.",
@@ -45,6 +48,7 @@ const wastePredictions = {
     },
     story_keyring_01: {
       title: "제주 바다 앞치마",
+      img: "./images/image4.jpg",
       emoji: "👗",
       pickup: { place: "제주시 이호테우해변", date: "2025년 12월 12일" },
       makerStory: "이호동 마을 할머니들이 작은 부표 조각으로 만든 알록달록한 앞치마입니다. 제주 바다의 색을 담았습니다.",
@@ -397,14 +401,17 @@ const wastePredictions = {
     container.innerHTML = products
       .map(
         (product) => `
-        <div class="product-card" onclick="showStory('${product.qrKey}')">
-          <div class="product-image">${product.emoji}</div>
-          <div class="product-name">${product.name}</div>
-        </div>
-      `
+          <div class="product-card" onclick="showStory('${product.qrKey}')">
+            <div class="product-image">
+              <img src="${product.img}" alt="${product.name}">
+            </div>
+            <div class="product-name">${product.name}</div>
+          </div>
+        `
       )
       .join("");
   }
+  
   
   // ========================
   // 스토리 표시
@@ -414,8 +421,10 @@ const wastePredictions = {
     if (!story) return;
   
     document.getElementById("storyTitle").textContent = story.title;
-    document.getElementById("storyImage").innerHTML = story.emoji;
-    document.getElementById("storyImage").style.fontSize = "120px";
+  
+    const storyImage = document.getElementById("storyImage");
+    storyImage.innerHTML = `<img src="${story.img}" alt="${story.title}" style="width:100%;height:100%;object-fit:cover;border-radius:15px;">`;
+  
     document.getElementById("pickupPlace").textContent = story.pickup.place;
     document.getElementById("pickupDate").textContent = story.pickup.date;
     document.getElementById("makerStory").textContent = story.makerStory;
@@ -424,7 +433,7 @@ const wastePredictions = {
     impactList.innerHTML = story.impact.map((item) => `<li>${item}</li>`).join("");
   
     showScreen("story");
-  }
+  }  
   
   // ========================
   // 초기화
