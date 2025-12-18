@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>조각보</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="container">
+    <!-- 랜딩 화면 -->
+    <div id="landing" class="screen active">
+      <h1>🌊 조각보</h1>
+      <div class="card">
+        <h2 style="text-align: center; color: #333;">섬유 정밀 분석기</h2>
+        <p style="text-align: center; color: #666; margin-bottom: 30px;">
+          플로깅으로 수집된 섬유를 AI로 분류하고,<br />
+          조각보 방식으로 엮어 복을 담은 제품으로 전달합니다
+        </p>
+
+        <!-- ✅ 사진 모드 -->
+        <button class="btn btn-primary" onclick="openCollectorMode('photo')">
+          📷 사진 모드
+        </button>
+
+        <!-- ✅ 영상 모드 -->
+        <button class="btn btn-primary" onclick="openCollectorMode('video')">
+          🎥 영상 모드
+        </button>
+
+        <button class="btn btn-secondary" onclick="showScreen('products')">
+          🛍️ 소비자 모드
+        </button>
+      </div>
+    </div>
+
+    <!-- 참여자: 분류 화면 -->
+    <div id="collector" class="screen">
+      <h1>🔍 섬유 분류</h1>
+      <!-- 모드 안내 문구 -->
+      <p id="modeHint" style="text-align:center;color:#fff;margin-top:-15px;margin-bottom:20px;"></p>
+
+      <div class="card">
+        <!-- ========================= -->
+        <!-- ✅ 사진 모드 섹션 -->
+        <!-- ========================= -->
+        <div id="photoModeWrap">
+          <h2>사진 업로드</h2>
+
+          <div class="file-input-wrapper">
+            <input type="file" id="wasteImage" accept="image/*" onchange="previewImage(event)" />
+            <label for="wasteImage" class="file-input-label">
+              <div style="font-size: 50px; margin-bottom: 10px;">📷</div>
+              <div style="font-size: 16px; color: #666;">수거한 섬유를 촬영하세요</div>
+              <div style="font-size: 14px; color: #999; margin-top: 5px;">클릭하여 사진 선택</div>
+            </label>
+          </div>
+
+          <img id="preview" class="image-preview" />
+
+          <button id="analyzeBtn" class="btn btn-primary" onclick="analyzeWaste()" style="display: none;">
+            🤖 AI 분석하기
+          </button>
+
+          <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p style="color: #667eea; font-weight: 600;">AI가 분석 중입니다...</p>
+          </div>
+
+          <div id="results" class="result-card">
+            <h3 style="margin-bottom: 20px; color: #333;">📊 분석 결과</h3>
+
+            <div class="result-item">
+              <span class="result-label">재질</span>
+              <span class="result-value" id="material">-</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">색상</span>
+              <span class="result-value" id="color">-</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">손상도</span>
+              <span class="result-value" id="damage">-</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">제작 가능성</span>
+              <span class="result-value" id="suitability">-</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">난이도</span>
+              <span class="result-value" id="difficulty">-</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">AI 신뢰도</span>
+              <span class="result-value" id="confidence">-</span>
+            </div>
+
+            <div style="margin-top: 20px;">
+              <strong style="color: #555;">권장 공정 단계:</strong>
+              <ol id="steps" class="steps-list"></ol>
+            </div>
+
+            <button class="btn btn-primary" onclick="registerPiece()" style="margin-top: 20px;">
+              ✅ 조각으로 등록
+            </button>
+          </div>
+        </div>
+
+        <!-- ========================= -->
+        <!-- ✅ 영상 모드 섹션 -->
+        <!-- ========================= -->
+        <div id="videoModeWrap">
+          <h2 id="videoSection">영상 업로드</h2>
+
+          <div class="file-input-wrapper">
+            <input type="file" id="wasteVideo" accept="video/*" onchange="previewVideo(event)" />
+            <label for="wasteVideo" class="file-input-label">
+              <div style="font-size: 50px; margin-bottom: 10px;">🎥</div>
+              <div style="font-size: 16px; color: #666;">수거한 섬유 영상을 촬영하세요</div>
+              <div style="font-size: 14px; color: #999; margin-top: 5px;">클릭하여 영상 선택</div>
+            </label>
+          </div>
+
+          <video id="previewVideo" class="image-preview" controls></video>
+
+          <button id="analyzeBtnVideo" class="btn btn-primary" onclick="analyzeWasteVideo()" style="display: none;">
+            🤖 AI 분석하기
+          </button>
+
+          <div id="loadingVideo" class="loading">
+            <div class="spinner"></div>
+            <p style="color: #667eea; font-weight: 600;">AI가 분석 중입니다...</p>
+          </div>
+
+          <div id="resultsVideo" class="result-card">
+            <h3 style="margin-bottom: 20px; color: #333;">📊 분석 결과</h3>
+
+            <div class="result-item">
+              <span class="result-label">재질</span>
+              <span class="result-value" id="materialVideo">-</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">색상</span>
+              <span class="result-value" id="colorVideo">-</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">손상도</span>
+              <span class="result-value" id="damageVideo">-</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">제작 가능성</span>
+              <span class="result-value" id="suitabilityVideo">-</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">난이도</span>
+              <span class="result-value" id="difficultyVideo">-</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">AI 신뢰도</span>
+              <span class="result-value" id="confidenceVideo">-</span>
+            </div>
+
+            <div style="margin-top: 20px;">
+              <strong style="color: #555;">권장 공정 단계:</strong>
+              <ol id="stepsVideo" class="steps-list"></ol>
+            </div>
+
+            <button class="btn btn-primary" onclick="registerPieceFromVideo()" style="margin-top: 20px;">
+              ✅ 조각으로 등록
+            </button>
+          </div>
+        </div>
+
+        <div class="nav-buttons">
+          <button class="btn btn-secondary btn-small" onclick="showScreen('landing')">← 돌아가기</button>
+          <button class="btn btn-secondary btn-small" onclick="showScreen('pieces')">조각 목록 보기 →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 조각 목록 화면 -->
+    <div id="pieces" class="screen">
+      <h1>📦 등록된 조각</h1>
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h2 style="margin: 0;">내 조각 목록</h2>
+          <button class="btn btn-secondary btn-small" onclick="clearPieces()">🗑️ 전체 초기화</button>
+        </div>
+
+        <div id="piecesList"></div>
+
+        <button class="btn btn-secondary" onclick="showScreen('landing')" style="margin-top: 20px;">← 홈으로</button>
+      </div>
+    </div>
+
+    <!-- 제품 목록 화면 -->
+    <div id="products" class="screen">
+      <h1>🛍️ 업사이클 제품</h1>
+      <div class="card">
+        <h2>제품 갤러리</h2>
+        <p style="color: #666; margin-bottom: 20px;">제주 섬유로 만든 특별한 제품들입니다</p>
+
+        <div id="productsList" class="product-grid"></div>
+
+        <button class="btn btn-secondary" onclick="showScreen('landing')" style="margin-top: 30px;">← 홈으로</button>
+      </div>
+    </div>
+
+    <!-- QR 스토리 화면 -->
+    <div id="story" class="screen">
+      <h1>📖 제품 스토리</h1>
+      <div class="card">
+        <div class="story-header">
+          <h2 id="storyTitle">-</h2>
+          <div id="storyImage" class="product-image" style="margin: 20px 0; border-radius: 15px; height: 300px;"></div>
+        </div>
+
+        <div class="story-section">
+          <h3>🌊 수거 정보</h3>
+          <p><strong>장소:</strong> <span id="pickupPlace">-</span></p>
+          <p><strong>날짜:</strong> <span id="pickupDate">-</span></p>
+        </div>
+
+        <div class="story-section">
+          <h3>👨‍👩‍👧‍👦 제작자 스토리</h3>
+          <p id="makerStory">-</p>
+        </div>
+
+        <div class="story-section">
+          <h3>🌍 환경 임팩트</h3>
+          <ul id="impactList" class="impact-list"></ul>
+        </div>
+
+        <div class="nav-buttons">
+          <button class="btn btn-secondary" onclick="showScreen('products')">← 제품 목록</button>
+          <button class="btn btn-primary" onclick="showScreen('pieces')">조각 보기 →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+</html>
