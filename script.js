@@ -3,7 +3,7 @@
 // ========================
 const wastePredictions = {
     default: {
-      material: "HDPE 플라스틱 (부표)",
+      material: "면 (부표)",
       color: "화이트/블루",
       damage: "중간 (스크래치/오염 있음)",
       suitability: "✅ 제작 가능",
